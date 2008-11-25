@@ -12,11 +12,24 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-
-
 from Tkinter import *
 from prison import *
 
+#initialize some variables
+h = 600
+w = 600
+
+N = 5
+M = 5
+
+ratio = 0.5
+
+strats = []
+payoff = {}
+
+colors = {'C':"blue",'D':"red"}
+
+#function to set up the prion. Called when the setup button is pushed
 def prisonsetup():
     global strats
     global payoff
@@ -24,17 +37,18 @@ def prisonsetup():
     global M
     global nodes
     global c
-    R = 3
-    T = 3.1
-    S = 0
-    P = 1
     N = sliden.get()
     M = slidem.get()
+    dx = float(w/M)
+    dy = float(h/N)
 
-    strats,payoff= initialsetup(N, M, slideratio.get(), R, S, T, P)
+    #call the setup function in prison.py
+    strats,payoff= initialsetup(N, M, slideratio.get(), slideR.get(), slideS.get(), slideT.get(), slideP.get())
 
+    #remove the old nodes
     c.delete(nodes)
-    nodes = [ [c.create_rectangle(w/M*float(j),h/N*float(i),w/M*float(j+1),h/N*float(i+1),fill=colors[strats[i][j]]) for j in range(M)] for i in range(N)]
+    #create the new ones, draw them to fill the space
+    nodes = [ [c.create_rectangle(dx*(j),dy*(i),dx*(j+1),dy*(i+1),fill=colors[strats[i][j]]) for j in range(M)] for i in range(N)]
 
     run.config(state=NORMAL)
 
@@ -48,51 +62,64 @@ def next ():
 
 
 
-h = 600
-w = 600
-
-N = 5
-M = 5
-
-ratio = 0.5
-
-strats = [ [0 for j in range(M)] for i in range(N)]
-payoff = {}
-
-colors = {'C':"blue",'D':"red"}
-
-# A Windows window created by tk usually starts with this command:
+# A window created by tk usually starts with this command:
 window = Tk()
 c = Canvas(window, bg='#FFFFFF', height=h, width=w)
-#r1ID = c.create_rectangle(0,0,20,20,fill='#00ff00',width=0)
-#r2ID = c.create_rectangle(0,20,20,40,fill='#ff0000',width=0)
-#l1ID = c.create_line(0,0,0,25,fill='green',smooth='true')
 
 nodes = [ [c.create_rectangle(w/M*float(j),h/N*float(i),w/M*float(j+1),h/N*float(i+1),fill=colors['D']) for j in range(M)] for i in range(N)]
 
-
-
-
-# note that the grid method is strongly preferred by an authority.
-c.grid(column=0,columnspan=5,row=2,rowspan=3)
+c.grid(column=0,columnspan=20,row=2,rowspan=3)
 
 labeln = Label(window,text="N:")
 labeln.grid(column=0,row=0)
-sliden = Scale(window,orient=HORIZONTAL,from_=4,to=100,resolution=1) 
+sliden = Scale(window,orient=HORIZONTAL,from_=4,to=200,resolution=1) 
 sliden.grid(column=1,row=0)
 
 labelm = Label(window,text="M:")
 labelm.grid(column=0,row=1)
-slidem = Scale(window,orient=HORIZONTAL,from_=4,to=100,resolution=1) 
+slidem = Scale(window,orient=HORIZONTAL,from_=4,to=200,resolution=1) 
 slidem.grid(column=1,row=1)
 
 slidem.set(50)
 sliden.set(50)
 
+def setsliders():
+    S = sliderS.get()
+    T = sliderT.get()
+    R = sliderR.get()
+    P = sliderP.get()
+    sliderS.config(from_=0,to=P)
+    sliderP.config(from_=S,to=T)
+    sliderT.config(from_=P,to=R)
+    sliderR.config(from_=T,to=5)
+
+labelR = Label(window,text="R:")
+labelR.grid(column=2,row=0)
+slideR = Scale(window,orient=HORIZONTAL,from_=0,to=5,resolution=0.1,command=setsliders) 
+slideR.grid(column=3,row=0)
+
+labelS = Label(window,text="S:")
+labelS.grid(column=2,row=1)
+slideS = Scale(window,orient=HORIZONTAL,from_=0,to=5,resolution=0.1,command=setsliders) 
+slideS.grid(column=3,row=1)
+
+
+labelT = Label(window,text="T:")
+labelT.grid(column=4,row=0)
+slideT = Scale(window,orient=HORIZONTAL,from_=0,to=5,resolution=0.1,command=setsliders) 
+slideT.grid(column=5,row=0)
+
+labelP = Label(window,text="P:")
+labelP.grid(column=4,row=1)
+slideP = Scale(window,orient=HORIZONTAL,from_=0,to=5,resolution=0.1,command=setsliders) 
+slideP.grid(column=5,row=1)
+
+
+
 labelratio = Label(window,text="Ratio of c to d")
-labelratio.grid(column=3,row=0)
+labelratio.grid(column=6,row=0)
 slideratio = Scale(window,variable=ratio,to=1.0,resolution=0.01,orient=HORIZONTAL)
-slideratio.grid(column=4,row=0)
+slideratio.grid(column=7,row=0)
 
 slideratio.set(0.5)
 
@@ -100,13 +127,13 @@ labelkey = Label(window,text="Defect:" +colors['D']+" Coop:"+colors['C'])
 labelkey.grid(column=1,row=5)
 
 run = Button(window,text="run",command=next,state=DISABLED,height=5,width=50)
-run.grid(column=2,row=5)
+run.grid(column=2,columnspan=3,row=5)
 
 setup = Button(window,text="setup",command=prisonsetup)
-setup.grid(column=3,row=1)
+setup.grid(column=6,row=1)
 
 quitbutton = Button(window,text="quit",command=window.quit)
 quitbutton.grid(column=4,row=5)
 
-# this is usually the last line pertaining to the Windows window.
+# this is usually the last line pertaining to the window.
 window.mainloop()

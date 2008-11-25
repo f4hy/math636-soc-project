@@ -57,10 +57,11 @@ def play (N,M,strats,payoff):
             value[i][j] += payoff[(ourstrat,west) ]
             
     
-    nextstrats=[ ['C' for j in range(M)] for i in range(N)]
+    nextstrats=[]
     
     #calculate the new strategy
     for i in range(N):
+        temp = []
         for j in range(M):
             
             #make a list of us and neighbors with values and their strat
@@ -71,7 +72,8 @@ def play (N,M,strats,payoff):
             choices.append((value[i][(j-1)%M],strats[i][(j-1)%M]))#west
             
             #pick the strat that has the highest result
-            nextstrats[i][j] = max(choices)[1]
+            temp.append(max(choices)[1])
+        nextstrats.append(temp)
 
             
     return nextstrats
