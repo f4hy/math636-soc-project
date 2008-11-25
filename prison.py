@@ -51,10 +51,10 @@ def play (N,M,strats,payoff):
             east     = strats[i][(j+1)%M]
             west     = strats[i][(j-1)%M]
             
-            value[i][j]  = payoff[(strats[i][j],north)]
-            value[i][j] += payoff[(strats[i][j],south)]
-            value[i][j] += payoff[(strats[i][j],east) ]
-            value[i][j] += payoff[(strats[i][j],west) ]
+            value[i][j]  = payoff[(ourstrat,north)]
+            value[i][j] += payoff[(ourstrat,south)]
+            value[i][j] += payoff[(ourstrat,east) ]
+            value[i][j] += payoff[(ourstrat,west) ]
             
     
     nextstrats=[ ['C' for j in range(M)] for i in range(N)]
