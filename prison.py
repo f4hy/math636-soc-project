@@ -36,7 +36,7 @@ def initialsetup (N, M, ratio, R, S, T, P):
     #randomly chooese from the list
     strats=[ [random.choice(distrobution) for j in range(M)] for i in range(N)]
     
-    return (strats,payoff,bestpayoff)
+    return (strats,payoff)
     
 def play (N,M,strats,payoff):
     """Plays the spacial prison game"""
@@ -53,29 +53,32 @@ def play (N,M,strats,payoff):
             west     = strats[i][(j-1)%M]
             
             #sum the payoff with neighbors
-            mypayoff  = payoff[(ourstrat,north)]
-            mypayoff += payoff[(ourstrat,south)]
-            mypayoff += payoff[(ourstrat,east) ]
-            mypayoff += payoff[(ourstrat,west) ]
+            mypayoff  = payoff[(mystrat,north)]
+            mypayoff += payoff[(mystrat,south)]
+            mypayoff += payoff[(mystrat,east) ]
+            mypayoff += payoff[(mystrat,west) ]
             
-            rowvalue.append(mypayoff)
-        value.append(rowvalue)
+            rowvalues.append(mypayoff)
+        value.append(rowvalues)
+
+    print "done with payoffs"
     
     bestpayoff = max(payoff.values())*4
+    print bestpayoff
     #calculate the new strategy
     nextstrats=[]
     for i in range(N):
         rowofstrats = []
         for j in range(M):
             if value[i][j] < bestpayoff:
-                
+
             #make a list of us and neighbors with values and their strat
                 choices = [(value[i][j],strats[i][j])] #current
                 choices.append((value[(i-1)%N][j],strats[(i-1)%N][j]))#north
                 choices.append((value[(i+1)%N][j],strats[(i+1)%N][j]))#south
                 choices.append((value[i][(j+1)%M],strats[i][(j+1)%M]))#east
                 choices.append((value[i][(j-1)%M],strats[i][(j-1)%M]))#west
-                
+
             #pick the strat that has the highest result
                 rowofstrats.append(max(choices)[1])
             else: rowofstrats.append(strats[i][j])

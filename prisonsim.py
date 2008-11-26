@@ -36,8 +36,8 @@ def prisonsetup():
     global nodes, c
     N = sliden.get()
     M = slidem.get()
-    dx = float(w/M)
-    dy = float(h/N)
+    dx = float(w)/float(M)
+    dy = float(h)/float(N)
 
     #call the setup function in prison.py
     strats,payoff= initialsetup(N, M, slideratio.get(), slideR.get(), slideS.get(), slideT.get(), slideP.get())
@@ -58,6 +58,7 @@ def next ():
 
 def analysis():
     """function to preform analysis on the setup"""
+    pass
 
 # A window created by tk usually starts with this command:
 window = Tk()
@@ -81,35 +82,40 @@ slidem.grid(column=1,row=1)
 slidem.set(50)
 sliden.set(50)
 
-def setsliders():
-    S = sliderS.get()
-    T = sliderT.get()
-    R = sliderR.get()
-    P = sliderP.get()
-    sliderS.config(from_=0,to=P)
-    sliderP.config(from_=S,to=T)
-    sliderT.config(from_=P,to=R)
-    sliderR.config(from_=T,to=5)
+def setslides(A):
+    S = slideS.get()
+    T = slideT.get()
+    R = slideR.get()
+    P = slideP.get()
+    slideS.config(from_=0,to=P)
+    slideP.config(from_=S,to=R)
+    slideR.config(from_=P,to=T)
+    slideT.config(from_=R,to=5)
 
 labelR = Label(window,text="R:")
 labelR.grid(column=2,row=0)
-slideR = Scale(window,orient=HORIZONTAL,from_=0,to=5,resolution=0.1,command=setsliders) 
+slideR = Scale(window,orient=HORIZONTAL,from_=0,to=5,resolution=0.1,command=setslides) 
 slideR.grid(column=3,row=0)
 
 labelS = Label(window,text="S:")
 labelS.grid(column=2,row=1)
-slideS = Scale(window,orient=HORIZONTAL,from_=0,to=5,resolution=0.1,command=setsliders) 
+slideS = Scale(window,orient=HORIZONTAL,from_=0,to=5,resolution=0.1,command=setslides) 
 slideS.grid(column=3,row=1)
 
 labelT = Label(window,text="T:")
 labelT.grid(column=4,row=0)
-slideT = Scale(window,orient=HORIZONTAL,from_=0,to=5,resolution=0.1,command=setsliders) 
+slideT = Scale(window,orient=HORIZONTAL,from_=0,to=5,resolution=0.1,command=setslides) 
 slideT.grid(column=5,row=0)
 
 labelP = Label(window,text="P:")
 labelP.grid(column=4,row=1)
-slideP = Scale(window,orient=HORIZONTAL,from_=0,to=5,resolution=0.1,command=setsliders) 
+slideP = Scale(window,orient=HORIZONTAL,from_=0,to=5,resolution=0.1,command=setslides) 
 slideP.grid(column=5,row=1)
+
+slideR.set(3)
+slideT.set(3.5)
+slideS.set(0)
+slideP.set(1)
 
 labelratio = Label(window,text="Ratio of c to d")
 labelratio.grid(column=6,row=0)
@@ -128,11 +134,11 @@ run.grid(column=2,columnspan=3,row=5)
 setup = Button(window,text="setup",command=prisonsetup)
 setup.grid(column=6,row=1)
 
-analyze = Button(window,test="analyze",command=anaysis)
+analyze = Button(window,text="analyze",command=analysis)
 analyze.grid(column=5,row=5)
 
 quitbutton = Button(window,text="quit",command=window.quit)
-quitbutton.grid(column=4,row=5)
+quitbutton.grid(column=7,row=5)
 
 # this is usually the last line pertaining to the window.
 window.mainloop()
