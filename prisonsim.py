@@ -16,8 +16,8 @@ from Tkinter import *
 from prison import *
 import copy
 #initialize some variables
-h = 600
-w = 600
+h = 700
+w = 700
 
 N = 5
 M = 5
@@ -42,10 +42,12 @@ def prisonsetup():
     #call the setup function in prison.py
     strats,payoff= initialsetup(N, M, slideratio.get(), slideR.get(), slideS.get(), slideT.get(), slideP.get())
 
-    #remove the old nodes
-    c.delete(nodes)
     #create the new ones, draw them to fill the space
-    nodes = [ [c.create_rectangle(dx*(j),dy*(i),dx*(j+1),dy*(i+1),fill=colors[strats[i][j]]) for j in range(M)] for i in range(N)]
+    newcanvas = Canvas(window, bg='#FFFFFF', height=h, width=w)
+    nodes = [ [newcanvas.create_rectangle(dx*(j),dy*(i),dx*(j+1),dy*(i+1),width=0,fill=colors[strats[i][j]]) for j in range(M)] for i in range(N)]
+    c = newcanvas
+    c.grid(column=0,columnspan=20,row=2,rowspan=3)
+
     #now the game can be played
     run.config(state=NORMAL)
 
@@ -71,12 +73,12 @@ c.grid(column=0,columnspan=20,row=2,rowspan=3)
 
 labeln = Label(window,text="N:")
 labeln.grid(column=0,row=0)
-sliden = Scale(window,orient=HORIZONTAL,from_=4,to=200,resolution=1) 
+sliden = Scale(window,orient=HORIZONTAL,from_=4,to=500,resolution=1) 
 sliden.grid(column=1,row=0)
 
 labelm = Label(window,text="M:")
 labelm.grid(column=0,row=1)
-slidem = Scale(window,orient=HORIZONTAL,from_=4,to=200,resolution=1) 
+slidem = Scale(window,orient=HORIZONTAL,from_=4,to=500,resolution=1) 
 slidem.grid(column=1,row=1)
 
 slidem.set(50)
