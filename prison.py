@@ -61,10 +61,7 @@ def play (N,M,strats,payoff):
             rowvalues.append(mypayoff)
         value.append(rowvalues)
 
-    print "done with payoffs"
-    
     bestpayoff = max(payoff.values())*4
-    print bestpayoff
     #calculate the new strategy
     nextstrats=[]
     for i in range(N):

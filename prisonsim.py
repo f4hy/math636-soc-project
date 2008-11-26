@@ -29,6 +29,9 @@ payoff = {}
 
 colors = {'C':"blue",'D':"red"}
 
+def setstatus(newstatus):
+    status.config(text=newstatus)
+
 def prisonsetup():
     """function to set up the prion. Called when the setup button is pushed """
     global strats, payoff
@@ -40,8 +43,9 @@ def prisonsetup():
     dy = float(h)/float(N)
 
     #call the setup function in prison.py
+    setstatus("Setting up")
     strats,payoff= initialsetup(N, M, slideratio.get(), slideR.get(), slideS.get(), slideT.get(), slideP.get())
-
+    setstatus("Drawing board")
     #create the new ones, draw them to fill the space
     newcanvas = Canvas(window, bg='#FFFFFF', height=h, width=w)
     nodes = [ [newcanvas.create_rectangle(dx*(j),dy*(i),dx*(j+1),dy*(i+1),width=0,fill=colors[strats[i][j]]) for j in range(M)] for i in range(N)]
@@ -50,13 +54,16 @@ def prisonsetup():
 
     #now the game can be played
     run.config(state=NORMAL)
+    setstatus("Ready to run")
 
 def next ():
     """Calculates the next thing in the sequence and updates the canvas"""
     global strats, payoff
+    setstatus("playing the game")
     oldstrats = copy.deepcopy(strats)
     strats = play(N,M,strats,payoff)[:]
     [c.itemconfig(nodes[i][j],fill=colors[strats[i][j]]) for j in range(M) for i in range(N) if oldstrats[i][j] is not strats[i][j]]
+    setstatus("Trun Done")
 
 def analysis():
     """function to preform analysis on the setup"""
@@ -93,23 +100,24 @@ def setslides(A):
     slideP.config(from_=S,to=R)
     slideR.config(from_=P,to=T)
     slideT.config(from_=R,to=5)
+    setstatus("You must setup agian to use the new values")
 
-labelR = Label(window,text="R:")
+labelR = Label(window,text="Reward:")
 labelR.grid(column=2,row=0)
 slideR = Scale(window,orient=HORIZONTAL,from_=0,to=5,resolution=0.1,command=setslides) 
 slideR.grid(column=3,row=0)
 
-labelS = Label(window,text="S:")
+labelS = Label(window,text="Suckers:")
 labelS.grid(column=2,row=1)
 slideS = Scale(window,orient=HORIZONTAL,from_=0,to=5,resolution=0.1,command=setslides) 
 slideS.grid(column=3,row=1)
 
-labelT = Label(window,text="T:")
+labelT = Label(window,text="Temptation:")
 labelT.grid(column=4,row=0)
 slideT = Scale(window,orient=HORIZONTAL,from_=0,to=5,resolution=0.1,command=setslides) 
 slideT.grid(column=5,row=0)
 
-labelP = Label(window,text="P:")
+labelP = Label(window,text="Punishment:")
 labelP.grid(column=4,row=1)
 slideP = Scale(window,orient=HORIZONTAL,from_=0,to=5,resolution=0.1,command=setslides) 
 slideP.grid(column=5,row=1)
@@ -138,6 +146,9 @@ setup.grid(column=6,row=1)
 
 analyze = Button(window,text="analyze",command=analysis)
 analyze.grid(column=5,row=5)
+
+status = Label(window,text="Status: first set up the board",width=20,wraplength=100)
+status.grid(column=6,row=5)
 
 quitbutton = Button(window,text="quit",command=window.quit)
 quitbutton.grid(column=7,row=5)
