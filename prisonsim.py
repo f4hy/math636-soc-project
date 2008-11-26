@@ -67,7 +67,13 @@ def next ():
 
 def analysis():
     """function to preform analysis on the setup"""
+    setstatus("Not implmeneted yet")
     pass
+
+def generateimage():
+    """Write the canvas of nodes to an eps file"""
+    c.postscript(file="prison.eps",colormode="color")
+    setstatus("wrote file prison.eps")
 
 # A window created by tk usually starts with this command:
 window = Tk()
@@ -146,6 +152,10 @@ setup.grid(column=6,row=1)
 
 analyze = Button(window,text="analyze",command=analysis)
 analyze.grid(column=5,row=5)
+
+generateoutput = Button(window,text="Write to file",command=generateimage)
+generateoutput.grid(column=7,row=3)
+
 
 status = Label(window,text="Status: first set up the board",width=20,wraplength=100)
 status.grid(column=6,row=5)
