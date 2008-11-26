@@ -58,9 +58,6 @@ def play (N,M,strats,payoff):
             mypayoff += payoff[(mystrat,east) ]
             mypayoff += payoff[(mystrat,west) ]
             
-            
-
-
             rowvalues.append(mypayoff)
         value.append(rowvalues)
 
@@ -69,20 +66,24 @@ def play (N,M,strats,payoff):
     bestpayoff = max(payoff.values())*4
     print bestpayoff
     #calculate the new strategy
-    nextstrats=strats[:]
+    nextstrats=[]
     for i in range(N):
+        rowofstrats = []
         for j in range(M):
             if value[i][j] < bestpayoff:
-                
+
             #make a list of us and neighbors with values and their strat
-                
                 choices = [(value[i][j],strats[i][j])] #current
-                bestneighbor = max([((value[(i+x)%N][(j+y)%M],strats[(i+x)%N][(j+y)%M])) for x in xrange(-1,2) for y in xrange(-1,2) if x**2!=y**2])
-                if (value[i][j],strats[i][j]) < bestneighbor:
-                    nextstrats[i][j] = bestneighbor[1]
+                choices.append((value[(i-1)%N][j],strats[(i-1)%N][j]))#north
+                choices.append((value[(i+1)%N][j],strats[(i+1)%N][j]))#south
+                choices.append((value[i][(j+1)%M],strats[i][(j+1)%M]))#east
+                choices.append((value[i][(j-1)%M],strats[i][(j-1)%M]))#west
 
+            #pick the strat that has the highest result
+                rowofstrats.append(max(choices)[1])
+            else: rowofstrats.append(strats[i][j])
    
-
+        nextstrats.append(rowofstrats)
 
     return nextstrats
 

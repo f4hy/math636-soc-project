@@ -14,7 +14,7 @@
 """
 from Tkinter import *
 from prison import *
-
+import copy
 #initialize some variables
 h = 600
 w = 600
@@ -45,19 +45,16 @@ def prisonsetup():
     #remove the old nodes
     c.delete(nodes)
     #create the new ones, draw them to fill the space
-    nodes = [ c.create_rectangle(dx*(j),dy*(i),dx*(j+1),dy*(i+1),fill=colors[strats[i][j]]) for j in range(M) for i in range(N)]
+    nodes = [ [c.create_rectangle(dx*(j),dy*(i),dx*(j+1),dy*(i+1),fill=colors[strats[i][j]]) for j in range(M)] for i in range(N)]
     #now the game can be played
     run.config(state=NORMAL)
 
 def next ():
     """Calculates the next thing in the sequence and updates the canvas"""
     global strats, payoff
-
-    oldstrats = strats[:]
-    strats = play(N,M,strats,payoff)
-    print "Done with play"
-    [ [c.itemconfig(nodes[i][j],fill=colors[strats[i][j]]) for j in range(M)] for i in range(N)]
-    print "Done with painting"
+    oldstrats = copy.deepcopy(strats)
+    strats = play(N,M,strats,payoff)[:]
+    [c.itemconfig(nodes[i][j],fill=colors[strats[i][j]]) for j in range(M) for i in range(N) if oldstrats[i][j] is not strats[i][j]]
 
 def analysis():
     """function to preform analysis on the setup"""
@@ -68,7 +65,7 @@ window = Tk()
 #set up the thing to draw the rectangles
 c = Canvas(window, bg='#FFFFFF', height=h, width=w)
 
-nodes = [ c.create_rectangle(w/M*float(j),h/N*float(i),w/M*float(j+1),h/N*float(i+1),fill=colors['D']) for j in range(M) for i in range(N)]
+nodes = [ [c.create_rectangle(w/M*float(j),h/N*float(i),w/M*float(j+1),h/N*float(i+1),fill=colors['D']) for j in range(M)] for i in range(N)]
 
 c.grid(column=0,columnspan=20,row=2,rowspan=3)
 
