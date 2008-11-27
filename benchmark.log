@@ -4,3 +4,15 @@ running next() 5 times with N*M: 250000 is: 10.1956779957
 Running benchmark at Wed Nov 26 18:27:01 2008
 running prisonsetup() 5 times with N*M: 25 is: 0.349714994431
 running next() 5 times with N*M: 2500 is: 0.103767156601
+
+Running benchmark at Wed Nov 26 18:31:11 2008
+running prisonsetup() 5 times with N*M: 25 is: 37.5092561245
+running next() 5 times with N*M: 250000 is: 10.578856945
+
+Running benchmark at Wed Nov 26 18:32:15 2008
+running prisonsetup() 5 times with N*M: 250000 is: 49.9538869858
+running next() 5 times with N*M: 250000 is: 11.6721379757
+
+Running benchmark at Wed Nov 26 18:46:50 2008
+running prisonsetup() 5 times with N*M: 250000 is: 118.266024113
+running next() 5 times with N*M: 250000 is: 26.5210728645
