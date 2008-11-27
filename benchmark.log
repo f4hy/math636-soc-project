@@ -16,3 +16,43 @@ running next() 5 times with N*M: 250000 is: 11.6721379757
 Running benchmark at Wed Nov 26 18:46:50 2008
 running prisonsetup() 5 times with N*M: 250000 is: 118.266024113
 running next() 5 times with N*M: 250000 is: 26.5210728645
+
+Running benchmark at Wed Nov 26 18:52:50 2008
+running prisonsetup() 5 times with N*M: 25 is: 0.351526975632
+running next() 5 times with N*M: 2500 is: 0.0987899303436
+
+Running benchmark at Wed Nov 26 18:52:52 2008
+running prisonsetup() 5 times with N*M: 2500 is: 0.35160112381
+running next() 5 times with N*M: 2500 is: 0.0990958213806
+
+Running benchmark at Wed Nov 26 18:52:53 2008
+running prisonsetup() 5 times with N*M: 2500 is: 0.349671840668
+running next() 5 times with N*M: 2500 is: 0.0983691215515
+
+Running benchmark at Wed Nov 26 18:53:02 2008
+running prisonsetup() 5 times with N*M: 25 is: 37.8513240814
+running next() 5 times with N*M: 250000 is: 10.1201088428
+
+Running benchmark at Wed Nov 26 18:57:07 2008
+running prisonsetup() 5 times with N*M: 40000 is: 5.60699105263
+running next() 5 times with N*M: 40000 is: 1.58621501923
+
+Running benchmark at Wed Nov 26 18:57:15 2008
+running prisonsetup() 5 times with N*M: 40000 is: 5.70070695877
+running next() 5 times with N*M: 40000 is: 1.57564282417
+
+Running benchmark at Wed Nov 26 18:57:24 2008
+running prisonsetup() 5 times with N*M: 40000 is: 5.63068294525
+running next() 5 times with N*M: 40000 is: 1.5662419796
+
+Running benchmark at Wed Nov 26 18:58:04 2008
+running prisonsetup() 5 times with N*M: 40000 is: 5.69843697548
+running next() 5 times with N*M: 40000 is: 1.56980419159
+
+Running benchmark at Wed Nov 26 18:58:13 2008
+running prisonsetup() 5 times with N*M: 40000 is: 5.68587803841
+running next() 5 times with N*M: 40000 is: 1.56582093239
+
+Running benchmark at Wed Nov 26 18:58:21 2008
+running prisonsetup() 5 times with N*M: 40000 is: 5.67580604553
+running next() 5 times with N*M: 40000 is: 1.56994605064

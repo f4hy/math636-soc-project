@@ -52,7 +52,7 @@ def prisonsetup():
     setstatus("Drawing board")
     #create the new ones, draw them to fill the space
     newcanvas = Canvas(window, bg='#FFFFFF', height=h, width=w)
-    nodes = [ [newcanvas.create_rectangle(dx*(j),dy*(i),dx*(j+1),dy*(i+1),width=0,fill=colors[strats[i][j]]) for j in range(M)] for i in range(N)]
+    nodes = [ [newcanvas.create_rectangle(dx*(j),dy*(i),dx*(j+1),dy*(i+1),width=0,fill=colors[strats[i][j]]) for j in xrange(M)] for i in xrange(N)]
     c = newcanvas
     c.grid(column=0,columnspan=20,row=2,rowspan=3)
 
@@ -88,7 +88,7 @@ def next ():
     setstatus("playing the game")
     oldstrats = copy.deepcopy(strats)
     strats = play(N,M,strats,payoff)[:]
-    [c.itemconfig(nodes[i][j],fill=colors[strats[i][j]]) for j in range(M) for i in range(N) if oldstrats[i][j] is not strats[i][j]]
+    [c.itemconfig(nodes[i][j],fill=colors[strats[i][j]]) for j in xrange(M) for i in xrange(N) if oldstrats[i][j] is not strats[i][j]]
     setstatus("Trun Done")
 
 def analysis():
@@ -106,7 +106,7 @@ window = Tk()
 #set up the thing to draw the rectangles
 c = Canvas(window, bg='#FFFFFF', height=h, width=w)
 
-nodes = [ [c.create_rectangle(w/M*float(j),h/N*float(i),w/M*float(j+1),h/N*float(i+1),fill=colors['D']) for j in range(M)] for i in range(N)]
+nodes = [ [c.create_rectangle(w/M*float(j),h/N*float(i),w/M*float(j+1),h/N*float(i+1),fill=colors['D']) for j in xrange(M)] for i in xrange(N)]
 
 c.grid(column=0,columnspan=20,row=2,rowspan=3)
 
