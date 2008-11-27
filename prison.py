@@ -34,7 +34,7 @@ def initialsetup (N, M, ratio, R, S, T, P):
     #creates a list filled with 'C' and 'D' in the corect proportion
     distrobution = ['C']*coop+['D']*defect
     #randomly chooese from the list
-    strats=[ [random.choice(distrobution) for j in range(M)] for i in range(N)]
+    strats=[ [random.choice(distrobution) for j in xrange(M)] for i in xrange(N)]
     
     return (strats,payoff)
     
@@ -43,9 +43,9 @@ def play (N,M,strats,payoff):
 
     value=[]
     #calculate the value each member gets
-    for i in range(N):
+    for i in xrange(N):
         rowvalues = [] #first calc the rows.
-        for j in range(M):
+        for j in xrange(M):
             mystrat = strats[i][j]  
             north    = strats[(i-1)%N][j]
             south    = strats[(i+1)%N][j]
@@ -64,9 +64,9 @@ def play (N,M,strats,payoff):
     bestpayoff = max(payoff.values())*4
     #calculate the new strategy
     nextstrats=[]
-    for i in range(N):
+    for i in xrange(N):
         rowofstrats = []
-        for j in range(M):
+        for j in xrange(M):
             if value[i][j] < bestpayoff:
 
             #make a list of us and neighbors with values and their strat
