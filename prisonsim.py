@@ -51,15 +51,20 @@ def prisonsetup():
     strats,payoff= initialsetup(N, M, slideratio.get(), slideR.get(), slideS.get(), slideT.get(), slideP.get())
     setstatus("Drawing board")
     #create the new ones, draw them to fill the space
-    newcanvas = Canvas(window, bg='#FFFFFF', height=h, width=w)
-    nodes = [ [newcanvas.create_rectangle(dx*(j),dy*(i),dx*(j+1),dy*(i+1),width=0,fill=colors[strats[i][j]]) for j in xrange(M)] for i in xrange(N)]
-    c = newcanvas
+
+    #localize
+    newrectangle = c.create_rectangle
+    lstrats = strats
+    lcolors = colors
+
+    nodes = [[newrectangle(dx*(j),dy*(i),dx*(j+1),dy*(i+1),width=0,fill=lcolors[lstrats[i][j]]) for j in xrange(M)] for i in xrange(N)]
     c.grid(column=0,columnspan=20,row=2,rowspan=3)
 
 
     #now the game can be played
     
     run.config(state=NORMAL)
+    multirun.config(state=NORMAL)
     setstatus("Ready to run.")
 
 def benchmark():
@@ -73,23 +78,40 @@ def benchmark():
     setupstatement = "from __main__ import prisonsetup;"
 
     setuptimer = timeit.Timer(runstatement,setupstatement)
-    f.write("running %s 5 times with N*M: %s is: %s\n" % (runstatement, (N*M),setuptimer.timeit(5)) )
+    elapsed = setuptimer.timeit(5)
+    f.write("running %s 5 times with N*M: %s is: %s\n" % (runstatement, (N*M),elapsed) )
 
-    runstatement = "next()"
-    setupstatement = "from __main__ import next;"
+    runstatement = "nextstep()"
+    setupstatement = "from __main__ import nextstep;"
 
     playtimer = timeit.Timer(runstatement,setupstatement)
     f.write("running %s 5 times with N*M: %s is: %s\n" % (runstatement, (N*M),playtimer.timeit(5)) )
 
 
-def next ():
-    """Calculates the next thing in the sequence and updates the canvas"""
+def nextstep ():
+    """Calculates the next step in the sequence and updates the canvas"""
     global strats, payoff
     setstatus("playing the game")
     oldstrats = copy.deepcopy(strats)
     strats = play(N,M,strats,payoff)[:]
-    [c.itemconfig(nodes[i][j],fill=colors[strats[i][j]]) for j in xrange(M) for i in xrange(N) if oldstrats[i][j] is not strats[i][j]]
+    changecolor = c.itemconfig
+    lcolors = colors
+    [c.itemconfig(nodes[i][j],fill=lcolors[strats[i][j]]) for j in xrange(M) for i in xrange(N) if oldstrats[i][j] is not strats[i][j]]
     setstatus("Trun Done")
+
+def multistep ():
+    """Calculates the next few steps in the sequence and updates the canvas"""
+    global strats, payoff
+    setstatus("playing the game")
+    oldstrats = copy.deepcopy(strats)
+    for x in xrange(5):
+        strats = play(N,M,strats,payoff)
+    changecolor = c.itemconfig
+    lcolors = colors
+    [c.itemconfig(nodes[i][j],fill=lcolors[strats[i][j]]) for j in xrange(M) for i in xrange(N) if oldstrats[i][j] is not strats[i][j]]
+    setstatus("Trun Done")
+
+    
 
 def analysis():
     """function to preform analysis on the setup"""
@@ -170,8 +192,12 @@ labelkey = Label(window,text="Defect:" +colors['D']+" Coop:"+colors['C'])
 labelkey.grid(column=1,row=5)
 
 #buttons
-run = Button(window,text="run",command=next,state=DISABLED,height=5,width=50)
-run.grid(column=2,columnspan=3,row=5)
+run = Button(window,text="Run one step",command=nextstep,state=DISABLED,height=5,width=50)
+run.grid(column=2,columnspan=2,row=5)
+
+multirun = Button(window,text="Run five steps",command=multistep,state=DISABLED,height=5)
+multirun.grid(column=4,row=5)
+
 
 setup = Button(window,text="setup",command=prisonsetup)
 setup.grid(column=6,row=1)
