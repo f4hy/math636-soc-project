@@ -16,6 +16,8 @@
 from Tkinter import *
 from prison import *
 import copy
+import timeit
+import time
 #initialize some variables
 h = 700
 w = 700
@@ -43,6 +45,7 @@ def prisonsetup():
     dx = float(w)/float(M)
     dy = float(h)/float(N)
 
+
     #call the setup function in prison.py
     setstatus("Setting up")
     strats,payoff= initialsetup(N, M, slideratio.get(), slideR.get(), slideS.get(), slideT.get(), slideP.get())
@@ -53,9 +56,31 @@ def prisonsetup():
     c = newcanvas
     c.grid(column=0,columnspan=20,row=2,rowspan=3)
 
+
     #now the game can be played
+    
     run.config(state=NORMAL)
-    setstatus("Ready to run")
+    setstatus("Ready to run.")
+
+def benchmark():
+    global strats, payoff
+    global N,M
+    global nodes, c
+    f=open('benchmark.log', 'a')
+    f.write('\nRunning benchmark at %s\n' % time.ctime())
+    
+    runstatement = "prisonsetup()"
+    setupstatement = "from __main__ import prisonsetup;"
+
+    setuptimer = timeit.Timer(runstatement,setupstatement)
+    f.write("running %s 5 times with N*M: %s is: %s\n" % (runstatement, (N*M),setuptimer.timeit(5)) )
+
+    runstatement = "next()"
+    setupstatement = "from __main__ import next;"
+
+    playtimer = timeit.Timer(runstatement,setupstatement)
+    f.write("running %s 5 times with N*M: %s is: %s\n" % (runstatement, (N*M),playtimer.timeit(5)) )
+
 
 def next ():
     """Calculates the next thing in the sequence and updates the canvas"""
@@ -156,6 +181,10 @@ analyze.grid(column=5,row=5)
 
 generateoutput = Button(window,text="Write to file",command=generateimage)
 generateoutput.grid(column=7,row=3)
+
+
+benchmark = Button(window,text="Benchmark",command=benchmark)
+benchmark.grid(column=7,row=4)
 
 
 status = Label(window,text="Status: first set up the board",width=20,wraplength=100)

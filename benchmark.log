@@ -1,0 +1,6 @@
+Running benchmark at Wed Nov 26 18:25:00 2008
+running prisonsetup() 5 times with N*M: 2500 is: 38.1937789917
+running next() 5 times with N*M: 250000 is: 10.1956779957
+Running benchmark at Wed Nov 26 18:27:01 2008
+running prisonsetup() 5 times with N*M: 25 is: 0.349714994431
+running next() 5 times with N*M: 2500 is: 0.103767156601
