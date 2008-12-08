@@ -142,7 +142,7 @@ def analysis():
 
 def generateimage():
     """Write the canvas of nodes to an eps file"""
-    c.postscript(file="prison.eps",colormode="color")
+    c.postscript(file="prison%s.eps" % time.ctime(),colormode="color")
     setstatus("wrote file prison.eps")
 
 # A window created by tk usually starts with this command:
