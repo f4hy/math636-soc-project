@@ -84,4 +84,40 @@ def play (N,M,strats,payoff):
 
     return nextstrats
 
+
     
+def countclusters(matrix,typetocount):
+    """Counts the clusters"""
+
+    numberofclusters = 0
+
+    N = len(matrix)
+    M = len(matrix[0])
+
+    counted=[ [0 for j in xrange(M)] for i in xrange(N)]
+    
+    def countme(i,j):
+        counted[i][j] = 1
+        size = 1
+        if matrix[(i+1)%N][j] == typetocount and counted[(i+1)%N][j] == 0:
+            size += countme((i+1)%N,j)
+        if matrix[i][(j+1)%M] == typetocount and counted[i][(j+1)%M] == 0:
+            size += countme(i,(j+1)%M)
+        if matrix[(i-1)%N][j] == typetocount and counted[(i-1)%N][j] == 0:
+            size += countme((i-1)%N,j)            
+        if matrix[i][(j-1)%M] == typetocount and counted[i][(j-1)%M] == 0:
+            size += countme(i,(j-1)%M)
+
+        return size
+
+    clustersizes = []
+    for i in xrange(N):
+        for j in xrange(M):
+            if counted[i][j] == 0 and matrix[i][j] == typetocount:
+                numberofclusters += 1
+                clustersizes.append(countme(i,j))
+    
+               
+    return (numberofclusters,clustersizes)
+                
+

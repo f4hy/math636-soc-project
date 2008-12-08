@@ -80,3 +80,14 @@ running nextstep() 5 times with N*M: 90000 is: 3.70931601524
 Running benchmark at Wed Nov 26 20:36:18 2008
 running prisonsetup() 5 times with N*M: 250000 is: 37.8948469162
 running nextstep() 5 times with N*M: 250000 is: 10.059484005
+
+Running benchmark at Wed Nov 26 20:47:20 2008
+running prisonsetup() 5 times with N*M: 250000 is: 1.13504219055
+
+Running benchmark at Wed Nov 26 20:48:07 2008
+running prisonsetup() 5 times with N*M: 90000 is: 13.5642981529
+running nextstep() 5 times with N*M: 90000 is: 3.57767295837
+
+Running benchmark at Sat Dec  6 02:25:23 2008
+running prisonsetup() 5 times with N*M: 2500 is: 0.347021102905
+running nextstep() 5 times with N*M: 2500 is: 0.100588083267

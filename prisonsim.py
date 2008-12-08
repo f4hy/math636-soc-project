@@ -19,13 +19,14 @@ import copy
 import timeit
 import time
 #initialize some variables
-h = 700
-w = 700
+h = 400
+w = 400
 
 N = 5
 M = 5
 
 ratio = 0.5
+graphics = True
 
 strats = []
 payoff = {}
@@ -34,6 +35,22 @@ colors = {'C':"blue",'D':"red"}
 
 def setstatus(newstatus):
     status.config(text=newstatus)
+
+def togglegraphics():
+    global graphics
+    graphics = not graphics
+    if graphics:
+        graphicsbutton.config(text="Graphics are on")
+        slidem.config(to=50)
+        sliden.config(to=50)
+        run.config(state=DISABLED)
+        multirun.config(state=DISABLED)
+        c.grid()
+    else:
+        graphicsbutton.config(text="Graphics are off")
+        slidem.config(to=1000)
+        sliden.config(to=1000)
+        c.grid_remove()
 
 def prisonsetup():
     """function to set up the prion. Called when the setup button is pushed """
@@ -49,20 +66,17 @@ def prisonsetup():
     #call the setup function in prison.py
     setstatus("Setting up")
     strats,payoff= initialsetup(N, M, slideratio.get(), slideR.get(), slideS.get(), slideT.get(), slideP.get())
-    setstatus("Drawing board")
-    #create the new ones, draw them to fill the space
-
+    #create the new ones, draw them to fill the space if graphics enabled
+    if graphics:
+        setstatus("Drawing board")
+        
     #localize
-    newrectangle = c.create_rectangle
-    lstrats = strats
-    lcolors = colors
-
-    nodes = [[newrectangle(dx*(j),dy*(i),dx*(j+1),dy*(i+1),width=0,fill=lcolors[lstrats[i][j]]) for j in xrange(M)] for i in xrange(N)]
-    c.grid(column=0,columnspan=20,row=2,rowspan=3)
-
-
+        newrectangle = c.create_rectangle
+        lstrats = strats
+        lcolors = colors
+        nodes = [[newrectangle(dx*(j),dy*(i),dx*(j+1),dy*(i+1),width=0,fill=lcolors[lstrats[i][j]]) for j in xrange(M)] for i in xrange(N)]
+        
     #now the game can be played
-    
     run.config(state=NORMAL)
     multirun.config(state=NORMAL)
     setstatus("Ready to run.")
@@ -93,11 +107,12 @@ def nextstep ():
     global strats, payoff
     setstatus("playing the game")
     oldstrats = copy.deepcopy(strats)
-    strats = play(N,M,strats,payoff)[:]
-    changecolor = c.itemconfig
-    lcolors = colors
-    [c.itemconfig(nodes[i][j],fill=lcolors[strats[i][j]]) for j in xrange(M) for i in xrange(N) if oldstrats[i][j] is not strats[i][j]]
-    setstatus("Trun Done")
+    strats = play(N,M,strats,payoff)
+    if graphics:
+        changecolor = c.itemconfig
+        lcolors = colors
+        [c.itemconfig(nodes[i][j],fill=lcolors[strats[i][j]]) for j in xrange(M) for i in xrange(N) if oldstrats[i][j] is not strats[i][j]]
+    setstatus("Turn Done")
 
 def multistep ():
     """Calculates the next few steps in the sequence and updates the canvas"""
@@ -106,17 +121,24 @@ def multistep ():
     oldstrats = copy.deepcopy(strats)
     for x in xrange(5):
         strats = play(N,M,strats,payoff)
-    changecolor = c.itemconfig
-    lcolors = colors
-    [c.itemconfig(nodes[i][j],fill=lcolors[strats[i][j]]) for j in xrange(M) for i in xrange(N) if oldstrats[i][j] is not strats[i][j]]
+    if graphics:
+        changecolor = c.itemconfig
+        lcolors = colors
+        [c.itemconfig(nodes[i][j],fill=lcolors[strats[i][j]]) for j in xrange(M) for i in xrange(N) if oldstrats[i][j] is not strats[i][j]]
     setstatus("Trun Done")
-
-    
 
 def analysis():
     """function to preform analysis on the setup"""
-    setstatus("Not implmeneted yet")
-    pass
+    setstatus("Analyzing")
+    A,B = countclusters(strats,'C')
+    f=open('clusters.log', 'a')
+    f.write('\nRunning analysis at %s\n' % time.ctime())
+    f.write('With M=%d, N=%d,R=%d,S=%d,T=%d,P=%d \n' % (M,N,slideR.get(), slideS.get(), slideT.get(), slideP.get()) )
+    f.write('Number of clusters: %d, Average Cluster size: %f \n' % (A,sum(B)/float(len(B)) ) ) 
+    f.write('Cluster sizes: %s\n' % sorted(B))
+
+    setstatus("Number of clusters %d, Ave cluster size %f, Wrote clusters to clusters.log" % (A,sum(B)/float(len(B)) ))
+
 
 def generateimage():
     """Write the canvas of nodes to an eps file"""
@@ -134,12 +156,12 @@ c.grid(column=0,columnspan=20,row=2,rowspan=3)
 
 labeln = Label(window,text="N:")
 labeln.grid(column=0,row=0)
-sliden = Scale(window,orient=HORIZONTAL,from_=4,to=500,resolution=1) 
+sliden = Scale(window,orient=HORIZONTAL,from_=4,to=50,resolution=1) 
 sliden.grid(column=1,row=0)
 
 labelm = Label(window,text="M:")
 labelm.grid(column=0,row=1)
-slidem = Scale(window,orient=HORIZONTAL,from_=4,to=500,resolution=1) 
+slidem = Scale(window,orient=HORIZONTAL,from_=4,to=50,resolution=1) 
 slidem.grid(column=1,row=1)
 
 slidem.set(50)
@@ -210,7 +232,10 @@ generateoutput.grid(column=7,row=3)
 
 
 benchmark = Button(window,text="Benchmark",command=benchmark)
-benchmark.grid(column=7,row=4)
+#benchmark.grid(column=7,row=4)
+
+graphicsbutton = Button(window,text="Graphics are on",command=togglegraphics,width=17)
+graphicsbutton.grid(column=7,row=3)
 
 
 status = Label(window,text="Status: first set up the board",width=20,wraplength=100)
