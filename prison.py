@@ -35,13 +35,13 @@ def initialsetup (N, M, ratio, R, S, T, P):
     distrobution = ['C']*coop+['D']*defect
     #randomly chooese from the list
     strats=[ [random.choice(distrobution) for j in xrange(M)] for i in xrange(N)]
-    
     return (strats,payoff)
     
 def play (N,M,strats,payoff):
     """Plays the spacial prison game"""
 
     value=[]
+    print "calculating valus"
     #calculate the value each member gets
     for i in xrange(N):
         rowvalues = [] #first calc the rows.
@@ -61,6 +61,7 @@ def play (N,M,strats,payoff):
             rowvalues.append(mypayoff)
         value.append(rowvalues)
 
+    print "calculating new strats"
     bestpayoff = max(payoff.values())*4
     #calculate the new strategy
     nextstrats=[]
@@ -82,6 +83,7 @@ def play (N,M,strats,payoff):
    
         nextstrats.append(rowofstrats)
 
+    
     return nextstrats
 
 
