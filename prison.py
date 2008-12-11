@@ -70,15 +70,22 @@ def play (N,M,strats,payoff):
         for j in xrange(M):
             if value[i][j] < bestpayoff:
 
-            #make a list of us and neighbors with values and their strat
-                choices = [(value[i][j],strats[i][j])] #current
-                choices.append((value[(i-1)%N][j],strats[(i-1)%N][j]))#north
-                choices.append((value[(i+1)%N][j],strats[(i+1)%N][j]))#south
-                choices.append((value[i][(j+1)%M],strats[i][(j+1)%M]))#east
-                choices.append((value[i][(j-1)%M],strats[i][(j-1)%M]))#west
+                mystrat = strats[i][j]
+                def bestneighbor(x, y):
+                    if x[0] > y[0]:
+                        return x
+                    if x[0] == y[0] and y[1] == mystrat:
+                        return y
+                    return y
+                
+                best = (value[i][j],mystrat) #current
+                best = bestneighbor(best,(value[(i-1)%N][j],strats[(i-1)%N][j]))
+                best = bestneighbor(best,(value[(i+1)%N][j],strats[(i+1)%N][j]))
+                best = bestneighbor(best,(value[i][(j+1)%M],strats[i][(j+1)%M]))
+                best = bestneighbor(best,(value[i][(j-1)%M],strats[i][(j-1)%M]))
 
             #pick the strat that has the highest result
-                rowofstrats.append(max(choices)[1])
+                rowofstrats.append(best[1])
             else: rowofstrats.append(strats[i][j])
    
         nextstrats.append(rowofstrats)
