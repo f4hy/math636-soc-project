@@ -19,8 +19,8 @@ Written for math363 by Brendan Fahy
 """
 import random
 
-def initialsetup (N, M, ratio):
-    """Initializes the a prison and returns the next state"""
+def initialrandomsetup (N, M, ratio):
+    """Initializes the a prison and returns a random state"""
 
     coop = int(100*ratio)
     defect = int(100*(1-ratio))
@@ -29,12 +29,26 @@ def initialsetup (N, M, ratio):
     #randomly chooese from the list
     strats=[ [random.choice(distrobution) for j in xrange(M)] for i in xrange(N)]
     return (strats)
+
+def initialcentercoopsetup (N, M):
+    """Initializes the a prison and returns a sea of defectors and on coop state"""
+
+    strats=[ ['D' for j in xrange(M)] for i in xrange(N)]
+    strats[int(N/2)][int(M/2)] = 'C'
+    return (strats)
+
+def initialcenterdefectsetup (N, M):
+    """Initializes the a prison and returns a sea of defectors and on coop state"""
+
+    strats=[ ['C' for j in xrange(M)] for i in xrange(N)]
+    strats[int(N/2)][int(M/2)] = 'D'
+    return (strats)
+
     
 def play (N,M,strats,payoff):
     """Plays the spacial prison game"""
 
     value=[]
-    print "calculating valus"
     #calculate the value each member gets
     for i in xrange(N):
         rowvalues = [] #first calc the rows.
@@ -54,7 +68,6 @@ def play (N,M,strats,payoff):
             rowvalues.append(mypayoff)
         value.append(rowvalues)
 
-    print "calculating new strats"
     bestpayoff = max(payoff.values())*4
     #calculate the new strategy
     nextstrats=[]
