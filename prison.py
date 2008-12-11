@@ -69,13 +69,12 @@ def play (N,M,strats,payoff):
         rowofstrats = []
         for j in xrange(M):
             if value[i][j] < bestpayoff:
-
                 mystrat = strats[i][j]
                 def bestneighbor(x, y):
                     if x[0] > y[0]:
                         return x
-                    if x[0] == y[0] and y[1] == mystrat:
-                        return y
+                    if x[0] == y[0] and x[1] == mystrat:
+                        return x
                     return y
                 
                 best = (value[i][j],mystrat) #current
