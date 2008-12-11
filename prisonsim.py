@@ -334,7 +334,7 @@ statistics.grid(column=6,row=4)
 
 labeltrials = Label(window,text="How many trials to run for statistics")
 labeltrials.grid(column=6,row=2)
-slidertrials = Scale(window,from_=1,to=50,resolution=1,orient=HORIZONTAL)
+slidertrials = Scale(window,from_=10,to=50,resolution=1,orient=HORIZONTAL)
 slidertrials.grid(column=6,row=3)
 
 
