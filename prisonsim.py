@@ -63,9 +63,11 @@ def prisonsetup():
     dy = float(h)/float(N)
 
 
+    setslides(1)
+
     #call the setup function in prison.py
     setstatus("Setting up")
-    strats,payoff= initialsetup(N, M, slideratio.get(), slideR.get(), slideS.get(), slideT.get(), slideP.get())
+    strats = initialsetup(N, M, slideratio.get())
     #create the new ones, draw them to fill the space if graphics enabled
     if graphics:
         setstatus("Drawing board")
@@ -168,6 +170,7 @@ slidem.set(50)
 sliden.set(50)
 
 def setslides(A):
+    global payoff
     S = slideS.get()
     T = slideT.get()
     R = slideR.get()
@@ -176,7 +179,14 @@ def setslides(A):
     slideP.config(from_=S,to=R)
     slideR.config(from_=P,to=T)
     slideT.config(from_=R,to=5)
-    setstatus("You must setup agian to use the new values")
+
+    payoff = {}
+    payoff[('C','C')] = slideR.get()
+    payoff[('C','D')] = slideS.get()
+    payoff[('D','C')] = slideT.get()
+    payoff[('D','D')] = slideP.get()
+
+    setstatus("New Payoffs Calulated")
 
 labelR = Label(window,text="Reward:")
 labelR.grid(column=2,row=0)
@@ -198,10 +208,10 @@ labelP.grid(column=4,row=1)
 slideP = Scale(window,orient=HORIZONTAL,from_=0,to=5,resolution=0.1,command=setslides) 
 slideP.grid(column=5,row=1)
 
-slideR.set(3)
-slideT.set(3.5)
+slideR.set(1)
+slideT.set(1.4)
 slideS.set(0)
-slideP.set(1)
+slideP.set(0)
 
 labelratio = Label(window,text="Ratio of c to d")
 labelratio.grid(column=6,row=0)

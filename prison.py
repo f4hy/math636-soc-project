@@ -19,15 +19,8 @@ Written for math363 by Brendan Fahy
 """
 import random
 
-def initialsetup (N, M, ratio, R, S, T, P):
+def initialsetup (N, M, ratio):
     """Initializes the a prison and returns the next state"""
-
-    #set up they payoff matrix
-    payoff = {}
-    payoff[('C','C')] = R
-    payoff[('C','D')] = S
-    payoff[('D','C')] = T
-    payoff[('D','D')] = P
 
     coop = int(100*ratio)
     defect = int(100*(1-ratio))
@@ -35,7 +28,7 @@ def initialsetup (N, M, ratio, R, S, T, P):
     distrobution = ['C']*coop+['D']*defect
     #randomly chooese from the list
     strats=[ [random.choice(distrobution) for j in xrange(M)] for i in xrange(N)]
-    return (strats,payoff)
+    return (strats)
     
 def play (N,M,strats,payoff):
     """Plays the spacial prison game"""
