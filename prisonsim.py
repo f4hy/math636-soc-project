@@ -15,6 +15,7 @@
 """
 from Tkinter import *
 from prison import *
+from math import log
 import copy
 import timeit
 import time
@@ -31,6 +32,9 @@ ratio = 0.5
 graphics = True
 
 strats = []
+
+paststrats = {}
+
 payoff = {}
 
 colors = {'C':"blue",'D':"red",'CD':"green",'DC':"yellow"}
@@ -66,7 +70,7 @@ def randomprisonsetup():
     dy = float(h)/float(N)
 
     generation = 0
-
+    paststarts = {}
     setslides(1)
     #call the setup function in prison.py
     setstatus("Setting up")
@@ -99,7 +103,7 @@ def centeredprisonsetup():
 
     setslides(1)
     generation = 0
-
+    paststarts = {}
     #call the setup function in prison.py
     setstatus("Setting up")
     strats = initialcenterdefectsetup(N, M)
@@ -143,29 +147,38 @@ def benchmark():
 def nextstep ():
     """Calculates the next step in the sequence and updates the canvas"""
     global strats, payoff,generation
-    generation += 1
+    
     setstatus("playing the game")
-    oldstrats = copy.deepcopy(strats)
+    
+    
+    
+    paststrats[generation] = copy.deepcopy(strats)
+    generation += 1
     strats = play(N,M,strats,payoff)
     if graphics:
         changecolor = c.itemconfig
         lcolors = colors
-        [c.itemconfig(nodes[i][j],fill=lcolors[strats[i][j]]) for j in xrange(M) for i in xrange(N) if oldstrats[i][j] is not strats[i][j]]
+        [c.itemconfig(nodes[i][j],fill=lcolors[strats[i][j]]) for j in xrange(M) for i in xrange(N) if paststrats[generation-1][i][j] is not strats[i][j]]
+    #mutualinformation(strats,paststrats[generation-1])
+    print "murual information next"
+    mutualinformation(strats,paststrats[generation-1])
+    if generation > 50:
+	    print "murual information after 10"
+	    mutualinformation(strats,paststrats[generation-50])
     setstatus("Turn Done, Generation:%d" % generation)
+    
 
 def multistep ():
     """Calculates the next few steps in the sequence and updates the canvas"""
-    global strats, payoff,generation
-    generation +=5
-    setstatus("playing the game")
-    oldstrats = copy.deepcopy(strats)
-    for x in xrange(5):
-        strats = play(N,M,strats,payoff)
-    if graphics:
-        changecolor = c.itemconfig
-        lcolors = colors
-        [c.itemconfig(nodes[i][j],fill=lcolors[strats[i][j]]) for j in xrange(M) for i in xrange(N) if oldstrats[i][j] is not strats[i][j]]
-    setstatus("Trun Done, Generation:%d" % generation)
+    global strats, payoff,generation,graphics
+    
+    graphicssetting=graphics
+    graphics = False
+    for x in xrange(4):
+	    nextstep()
+    graphics = graphicssetting
+    nextstep()
+    
 
 def analysis():
     """function to preform analysis on the setup"""
@@ -189,13 +202,58 @@ def analysis():
         print sys.exc_info()
         setstatus("Cluster too large to count")
 
+def mutualinformation(x,y):
+	pcc = 0.0
+	pdd = 0.0
+	
+	#ratio of c's
+	pc = float(len([j for i in x for j in i if j=='C']))/float(M*N)
+	#ratio of d's
+	pd = float(len([j for i in x for j in i if j=='D']))/float(M*N)
+	
+	print pc,1-pd
+	
+	pi = {'C':pc,'D':pd}
+	
+	
+	pyc = float(len([j for i in y for j in i if j=='C']))/float(M*N)
+	pyd = float(len([j for i in y for j in i if j=='D']))/float(M*N)
+	
+	py = {'C':pyc,'D':pyd}
+	
+	
+	for j in xrange(M):
+		for i in xrange(N):
+			if x[i][j] == y[i][j]:
+				if x[i][j] == 'C':
+					pcc += 1.0
+				else:
+					pdd += 1.0
+	#ratio of c's that change to c's
+	pcc = pcc/(pc*float(M*N))
+	pcd = 1-pcc
+	#ratio of d's that change to d's
+	pdd = pdd/(pd*float(M*N))
+	pdc = 1-pdd
+	
+	cross = {('C','C'):pcc,('C','D'):pcd,('D','D'):pdd,('D','C'):pdc}
+	
+	I = []
+	print pcc,pdd			
+	for j in xrange(M):
+		for i in xrange(N):
+			I.append(cross[(x[i][j],y[i][j])]*log( cross[(x[i][j],y[i][j])]/(pi[x[i][j]]*py[y[i][j]]),2))
+			
+	print sum(I)/(N*M)
+	
+
 def generatestatistics():
     """function to preform analysis on the setup"""
     setstatus("Analyzing")
 
     sys.setrecursionlimit(10000)
 
-    f=open('statistics %s.log' % time.ctime(), 'a')
+    f=open('statistics%s%s.log' % (time.localtime()[4],time.localtime()[5]), 'a')
     f.write('#Running statistical analysis at %s\n' % time.ctime())
     f.write('#With M=%d, N=%d,R=%f,S=%f,T=%f,P=%f starting generation:%d \n' % (M,N,slideR.get(), slideS.get(), slideT.get(), slideP.get(),generation) )
 
@@ -221,8 +279,8 @@ def generatestatistics():
             defects = float(len([j for i in strats for j in i if j=='D']))/float(M*N)
             f.write('  %d         %f     %f     %s       \n' % (generation,coops,1-coops,"XXX") )
         nextstep()
-    
-    f=open('clusterdistrobution %s.log' % time.ctime(), 'a')
+
+    f=open('clusterdistrobution%s%s.log'  % (time.localtime()[4],time.localtime()[5]), 'a')
     f.write('#histogram created at %s\n' % time.ctime())
     f.write('#With M=%d, N=%d,R=%f,S=%f,T=%f,P=%f starting generation:%d \n' % (M,N,slideR.get(), slideS.get(), slideT.get(), slideP.get(),generation) )
     f.write('#cluster sizes----howmany ocurrances after %d trials\n' % slidertrials.get())
@@ -263,10 +321,10 @@ def setslides(A):
     T = slideT.get()
     R = slideR.get()
     P = slideP.get()
-    slideS.config(from_=0,to=P)
-    slideP.config(from_=S,to=R)
-    slideR.config(from_=P,to=T)
-    slideT.config(from_=R,to=5)
+    slideS.config(from_=0,to=0)
+    slideP.config(from_=0,to=-8)
+    slideR.config(from_=1,to=1)
+    slideT.config(from_=1,to=3)
 
     payoff = {}
     payoff[('C','C')] = slideR.get()
@@ -334,7 +392,7 @@ statistics.grid(column=6,row=4)
 
 labeltrials = Label(window,text="How many trials to run for statistics")
 labeltrials.grid(column=6,row=2)
-slidertrials = Scale(window,from_=10,to=50,resolution=1,orient=HORIZONTAL)
+slidertrials = Scale(window,from_=10,to=70000,resolution=1,orient=HORIZONTAL)
 slidertrials.grid(column=6,row=3)
 
 
