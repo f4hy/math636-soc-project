@@ -37,6 +37,9 @@ paststrats = {}
 
 payoff = {}
 
+
+mutualinformationfile=open('mutualinformation%s%s.log' % (time.localtime()[4],time.localtime()[5]), 'a')
+
 colors = {'C':"blue",'D':"red",'CD':"green",'DC':"yellow"}
 
 def setstatus(newstatus):
@@ -61,6 +64,7 @@ def togglegraphics():
 def randomprisonsetup():
     """function to set up the prion. Called when the setup button is pushed """
     global strats, payoff
+    global mutualinformationfile
     global N,M
     global nodes, c
     global generation
@@ -71,6 +75,9 @@ def randomprisonsetup():
 
     generation = 0
     paststarts = {}
+    mutualinformationfile=open('mutualinformation%s%s.log' % (time.localtime()[4],time.localtime()[5]), 'a')
+    mutualinformationfile.write('#Running statistical analysis at %s\n' % time.ctime())
+
     setslides(1)
     #call the setup function in prison.py
     setstatus("Setting up")
@@ -78,7 +85,6 @@ def randomprisonsetup():
     #create the new ones, draw them to fill the space if graphics enabled
     if graphics:
         setstatus("Drawing board")
-        
     #localize
         newrectangle = c.create_rectangle
         lstrats = strats
@@ -94,6 +100,7 @@ def centeredprisonsetup():
     """function to set up the prion. Called when the setup button is pushed """
     global strats, payoff
     global N,M
+    global mutualinformationfile
     global nodes, c
     global generation
     N = sliden.get()
@@ -104,13 +111,16 @@ def centeredprisonsetup():
     setslides(1)
     generation = 0
     paststarts = {}
+    mutualinformationfile=open('mutualinformation%s%s.log' % (time.localtime()[4],time.localtime()[5]), 'a')
+    mutualinformationfile.write('#Running statistical analysis at %s\n' % time.ctime())
+
+
     #call the setup function in prison.py
     setstatus("Setting up")
     strats = initialcenterdefectsetup(N, M)
     #create the new ones, draw them to fill the space if graphics enabled
     if graphics:
         setstatus("Drawing board")
-        
     #localize
         newrectangle = c.create_rectangle
         lstrats = strats
@@ -146,7 +156,7 @@ def benchmark():
 
 def nextstep ():
     """Calculates the next step in the sequence and updates the canvas"""
-    global strats, payoff,generation
+    global strats, payoff,generation,paststrats
     
     setstatus("playing the game")
     
@@ -158,13 +168,14 @@ def nextstep ():
     if graphics:
         changecolor = c.itemconfig
         lcolors = colors
-        [c.itemconfig(nodes[i][j],fill=lcolors[strats[i][j]]) for j in xrange(M) for i in xrange(N) if paststrats[generation-1][i][j] is not strats[i][j]]
+#        [c.itemconfig(nodes[i][j],fill=lcolors[strats[i][j]]) for j in xrange(M) for i in xrange(N) if paststrats[generation-1][i][j] is not strats[i][j]]
+        [c.itemconfig(nodes[i][j],fill=lcolors[strats[i][j]]) for j in xrange(M) for i in xrange(N)]
     #mutualinformation(strats,paststrats[generation-1])
-    print "murual information next"
+    mutualinformationfile.write("mutual information after 1")
     mutualinformation(strats,paststrats[generation-1])
-    if generation > 50:
-	    print "murual information after 10"
-	    mutualinformation(strats,paststrats[generation-50])
+    if generation > 15:
+	mutualinformationfile.write("mutual information after 15")
+        mutualinformation(strats,paststrats[generation-15])
     setstatus("Turn Done, Generation:%d" % generation)
     
 
@@ -203,49 +214,47 @@ def analysis():
         setstatus("Cluster too large to count")
 
 def mutualinformation(x,y):
-	pcc = 0.0
-	pdd = 0.0
+    pcc = 0.0
+    pdd = 0.0
 	
 	#ratio of c's
-	pc = float(len([j for i in x for j in i if j=='C']))/float(M*N)
+    pc = float(len([j for i in x for j in i if j=='C']))/float(M*N)
 	#ratio of d's
-	pd = float(len([j for i in x for j in i if j=='D']))/float(M*N)
-	
-	print pc,1-pd
-	
-	pi = {'C':pc,'D':pd}
-	
-	
-	pyc = float(len([j for i in y for j in i if j=='C']))/float(M*N)
-	pyd = float(len([j for i in y for j in i if j=='D']))/float(M*N)
-	
-	py = {'C':pyc,'D':pyd}
+    pd = float(len([j for i in x for j in i if j=='D']))/float(M*N)
+    
+    pi = {'C':pc,'D':pd}
+    
+    
+    pyc = float(len([j for i in y for j in i if j=='C']))/float(M*N)
+    pyd = float(len([j for i in y for j in i if j=='D']))/float(M*N)
+    
+    py = {'C':pyc,'D':pyd}
 	
 	
-	for j in xrange(M):
-		for i in xrange(N):
-			if x[i][j] == y[i][j]:
-				if x[i][j] == 'C':
-					pcc += 1.0
-				else:
-					pdd += 1.0
+    for j in xrange(M):
+        for i in xrange(N):
+            if x[i][j] == y[i][j]:
+                if x[i][j] == 'C':
+                    pcc += 1.0
+                else:
+                    pdd += 1.0
 	#ratio of c's that change to c's
-	pcc = pcc/(pc*float(M*N))
-	pcd = 1-pcc
+    pcc = pcc/(pc*float(M*N))
+    pcd = 1-pcc
 	#ratio of d's that change to d's
-	pdd = pdd/(pd*float(M*N))
-	pdc = 1-pdd
-	
-	cross = {('C','C'):pcc,('C','D'):pcd,('D','D'):pdd,('D','C'):pdc}
-	
-	I = []
-	print pcc,pdd			
-	for j in xrange(M):
-		for i in xrange(N):
-			I.append(cross[(x[i][j],y[i][j])]*log( cross[(x[i][j],y[i][j])]/(pi[x[i][j]]*py[y[i][j]]),2))
-			
-	print sum(I)/(N*M)
-	
+    pdd = pdd/(pd*float(M*N))
+    pdc = 1-pdd
+    
+    cross = {('C','C'):pcc,('C','D'):pcd,('D','D'):pdd,('D','C'):pdc}
+    
+    I = []
+    
+    for j in xrange(M):
+        for i in xrange(N):
+            I.append(cross[(x[i][j],y[i][j])]*log( cross[(x[i][j],y[i][j])]/(pi[x[i][j]]*py[y[i][j]]),2))
+            
+
+    mutualinformationfile.write("%s" % (sum(I)/(N*M)))
 
 def generatestatistics():
     """function to preform analysis on the setup"""
